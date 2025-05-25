@@ -43,7 +43,7 @@ async def handle_options(request):
     print(f"Получен OPTIONS запрос: {request.method} {request.path}")
     print(f"Заголовки запроса: {request.headers}")
     response = web.Response(status=200)
-    response.headers['Access-Control-Allow-Origin'] = 'https://telegram-mini-9vtyr1wee-ermegors-projects.vercel.app'
+    response.headers['Access-Control-Allow-Origin'] = 'https://project-tg-frontend-sigma.vercel.app'
     response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
     print(f"Ответные заголовки для OPTIONS: {response.headers}")
