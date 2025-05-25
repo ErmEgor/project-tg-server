@@ -41,9 +41,12 @@ async def handle_submit(request):
 # Обработчик OPTIONS-запроса (preflight)
 async def handle_options(request):
     origin = request.headers.get('Origin')
+    print(f"[OPTIONS] Origin: {origin}")
     response = web.Response(status=200)
     if origin in ALLOWED_ORIGINS:
         response.headers['Access-Control-Allow-Origin'] = origin
+    else:
+        print(f"[OPTIONS] Origin {origin} не разрешён")
     response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
     return response
@@ -66,14 +69,15 @@ ALLOWED_ORIGINS = {
 async def cors_middleware(app, handler):
     async def middleware(request):
         origin = request.headers.get('Origin')
-        print(f"Middleware: Обработка запроса {request.method} {request.path} от origin: {origin}")
+        print(f"[Middleware] Origin: {origin}, Method: {request.method}")
         response = await handler(request)
 
         if origin in ALLOWED_ORIGINS:
             response.headers['Access-Control-Allow-Origin'] = origin
+        else:
+            print(f"[Middleware] Origin {origin} не разрешён")
         response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
         response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-        print(f"Ответные заголовки: {response.headers}")
         return response
     return middleware
 
