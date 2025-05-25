@@ -40,14 +40,14 @@ async def handle_submit(request):
 
 # Обработчик OPTIONS-запроса (preflight)
 async def handle_options(request):
-    print(f"Получен OPTIONS запрос: {request.method} {request.path}")
-    print(f"Заголовки запроса: {request.headers}")
+    origin = request.headers.get('Origin')
     response = web.Response(status=200)
-    response.headers['Access-Control-Allow-Origin'] = 'https://project-tg-frontend-sigma.vercel.app'
+    if origin in ALLOWED_ORIGINS:
+        response.headers['Access-Control-Allow-Origin'] = origin
     response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-    print(f"Ответные заголовки для OPTIONS: {response.headers}")
     return response
+
 
 # Настройка приложения
 app = web.Application()
@@ -57,16 +57,26 @@ app.add_routes([
 ])
 
 # Middleware для CORS
+ALLOWED_ORIGINS = {
+    'https://project-tg-frontend-sigma.vercel.app',
+    'https://project-tg-frontend-git-main-ermegors-projects.vercel.app',
+    'https://project-tg-frontend-boi35acja-ermegors-projects.vercel.app',
+}
+
 async def cors_middleware(app, handler):
     async def middleware(request):
-        print(f"Middleware: Обработка запроса {request.method} {request.path}")
+        origin = request.headers.get('Origin')
+        print(f"Middleware: Обработка запроса {request.method} {request.path} от origin: {origin}")
         response = await handler(request)
-        response.headers['Access-Control-Allow-Origin'] = 'https://project-tg-frontend-sigma.vercel.app'
+
+        if origin in ALLOWED_ORIGINS:
+            response.headers['Access-Control-Allow-Origin'] = origin
         response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
         response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
         print(f"Ответные заголовки: {response.headers}")
         return response
     return middleware
+
 
 app.middlewares.append(cors_middleware)
 
