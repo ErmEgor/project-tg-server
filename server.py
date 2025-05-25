@@ -61,7 +61,7 @@ async def cors_middleware(app, handler):
     async def middleware(request):
         print(f"Middleware: Обработка запроса {request.method} {request.path}")
         response = await handler(request)
-        response.headers['Access-Control-Allow-Origin'] = 'https://telegram-mini-9vtyr1wee-ermegors-projects.vercel.app'
+        response.headers['Access-Control-Allow-Origin'] = 'https://project-tg-frontend-sigma.vercel.app'
         response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
         response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
         print(f"Ответные заголовки: {response.headers}")
