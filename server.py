@@ -51,14 +51,6 @@ async def handle_options(request):
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
     return response
 
-
-# Настройка приложения
-app = web.Application()
-app.add_routes([
-    web.post('/submit', handle_submit),
-    web.options('/submit', handle_options)
-])
-
 # Middleware для CORS
 ALLOWED_ORIGINS = {
     'https://project-tg-frontend-sigma.vercel.app',
@@ -81,8 +73,17 @@ async def cors_middleware(app, handler):
         return response
     return middleware
 
+# Настройка приложения
+app = web.Application()
+
 
 app.middlewares.append(cors_middleware)
+
+app.add_routes([
+    web.post('/submit', handle_submit),
+    web.options('/submit', handle_options)
+])
+
 
 # Запуск сервера
 async def main():
