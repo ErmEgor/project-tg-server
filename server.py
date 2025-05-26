@@ -55,7 +55,7 @@ async def handle_options(request):
 ALLOWED_ORIGINS = {
     'https://project-tg-frontend-sigma.vercel.app',
     'https://project-tg-frontend-git-main-ermegors-projects.vercel.app',
-    'https://project-tg-frontend-boi35acja-ermegors-projects.vercel.app',
+    'https://project-tg-frontend-ermegors-projects.vercel.app/',
 }
 
 async def cors_middleware(app, handler):
