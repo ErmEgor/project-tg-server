@@ -51,7 +51,7 @@ async def handle_options(request):
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
     return response
 
-# Middleware для CORS
+# Middleware для CORSы
 ALLOWED_ORIGINS = {
     'https://project-tg-frontend-sigma.vercel.app',
     'https://project-tg-frontend-git-main-ermegors-projects.vercel.app/',
