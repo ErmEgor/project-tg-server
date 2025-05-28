@@ -133,7 +133,7 @@ app.add_routes([
     web.get('/test', handle_test)
 ])
 
-# Запуск сервера
+# Запуск сервераf
 async def main():
     logger.info(f"Запускаем сервер на {WEBAPP_HOST}:{WEBAPP_PORT}")
     await send_log_to_telegram(f"Запускаем сервер на {WEBAPP_HOST}:{WEBAPP_PORT}")
