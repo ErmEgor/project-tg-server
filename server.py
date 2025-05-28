@@ -79,14 +79,13 @@ async def handle_submit(request):
     logger.info(f"Получен запрос: {request.method} /submit")
     await send_log_to_telegram(f"Получен запрос: {request.method} /submit")
     
-    # Логируем заголовки как строку
     headers_str = ", ".join([f"{key}: {value}" for key, value in request.headers.items()])
     logger.info(f"Заголовки запроса: {headers_str}")
     await send_log_to_telegram(f"Заголовки запроса: {headers_str}")
     
-    # Обрабатываем тело запроса с правильной кодировкой
     try:
-        data = await request.json()
+        raw_data = await request.read()
+        data = json.loads(raw_data.decode('utf-8'))  # Явно декодируем как UTF-8
         logger.info(f"Тело запроса: {data}")
         await send_log_to_telegram(f"Тело запроса: {json.dumps(data, ensure_ascii=False)}")
     except json.JSONDecodeError as e:
@@ -97,7 +96,6 @@ async def handle_submit(request):
     name = data.get('name', 'Не указано')
     message = data.get('message', 'Не указано')
     
-    # Отправляем сообщение администратору
     msg = f"<b>Новая заявка (через сервер)</b>\nИмя: {name}\nСообщение: {message}"
     logger.info(f"Отправляем сообщение администратору {ADMIN_ID}: {msg}")
     await send_log_to_telegram(f"Отправляем сообщение администратору: {msg}")
