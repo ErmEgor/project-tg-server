@@ -9,8 +9,8 @@ from dotenv import load_dotenv
 
 # Загрузка переменных окружения
 load_dotenv()
-TOKEN = os.getenv("TOKEN")
-ADMIN_ID = int(os.getenv("ADMIN_ID"))
+TOKEN = os.getenv("TOKEN") or "7711881075:AAH9Yvz9vRTabNUcn7fk5asEX6RoL0Gy9_k"  # Резервный токен
+ADMIN_ID = int(os.getenv("ADMIN_ID") or "7586559527")  # Резервный ID
 WEBAPP_HOST = "0.0.0.0"
 WEBAPP_PORT = int(os.getenv("PORT", 8080))
 
@@ -36,38 +36,32 @@ async def handle_submit(request):
         return web.json_response({'status': 'error', 'message': 'Invalid JSON'}, status=400)
     except Exception as e:
         print(f"Ошибка обработки POST-запроса: {e}")
-        return web.json_response({'status': 'error', 'message': str(e)}, status=400)
+        return web.json_response({'status': 'error', 'message': str(e)}, status=500)
 
 # Обработчик OPTIONS-запроса (preflight)
 async def handle_options(request):
-    origin = request.headers.get('Origin')
+    origin = request.headers.get('Origin', '')
     print(f"[OPTIONS] Origin: {origin}")
     response = web.Response(status=200)
-    if origin in ALLOWED_ORIGINS:
-        response.headers['Access-Control-Allow-Origin'] = origin
-    else:
-        print(f"[OPTIONS] Origin {origin} не разрешён")
+    response.headers['Access-Control-Allow-Origin'] = origin
     response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
     return response
 
-# Middleware для CORSыd
+# Middleware для CORS
 ALLOWED_ORIGINS = {
+    'https://project-tg-frontend-git-main-ermegors-projects.vercel.app',
     'https://project-tg-frontend-sigma.vercel.app',
-    'https://project-tg-frontend-git-main-ermegors-projects.vercel.app/',
-    'https://project-tg-frontend-iq1dv9sx9-ermegors-projects.vercel.app/',
+    'https://project-tg-frontend-iq1dv9sx9-ermegors-projects.vercel.app',
 }
 
 async def cors_middleware(app, handler):
     async def middleware(request):
-        origin = request.headers.get('Origin')
+        origin = request.headers.get('Origin', '')
         print(f"[Middleware] Origin: {origin}, Method: {request.method}")
         response = await handler(request)
-
-        if origin in ALLOWED_ORIGINS:
+        if origin in ALLOWED_ORIGINS or 'vercel.app' in origin:  # Разрешаем все поддомены vercel.app для отладки
             response.headers['Access-Control-Allow-Origin'] = origin
-        else:
-            print(f"[Middleware] Origin {origin} не разрешён")
         response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
         response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
         return response
@@ -75,15 +69,11 @@ async def cors_middleware(app, handler):
 
 # Настройка приложения
 app = web.Application()
-
-
 app.middlewares.append(cors_middleware)
-
 app.add_routes([
     web.post('/submit', handle_submit),
     web.options('/submit', handle_options)
 ])
-
 
 # Запуск сервера
 async def main():
