@@ -85,7 +85,7 @@ async def handle_submit(request):
     
     try:
         raw_data = await request.read()
-        data = json.loads(raw_data.decode('utf-8'))  # Явно декодируем как UTF-8
+        data = json.loads(raw_data.decode('utf-8'))  # Явно декодируем какs UTF-8
         logger.info(f"Тело запроса: {data}")
         await send_log_to_telegram(f"Тело запроса: {json.dumps(data, ensure_ascii=False)}")
     except json.JSONDecodeError as e:
